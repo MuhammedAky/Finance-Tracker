@@ -4,21 +4,15 @@ import {
   Box,
   IconButton,
   MenuItem,
-  InputAdornment,
-  FormControl,
-  Select,
-  TextField,
   Typography,
   useTheme,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../theme";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+
+import PopupDialog from './PopupDialog';
 
 const Sidebar = () => {
   const theme = useTheme();
@@ -28,63 +22,23 @@ const Sidebar = () => {
 
   const [isIncomePopupOpen, setIncomePopupOpen] = useState(false);
   const [isExpensePopupOpen, setExpensePopupOpen] = useState(false);
-  const [incomeAmount, setIncomeAmount] = useState('');
-  const [incomeCurrency, setIncomeCurrency] = useState('');
-  const [incomeExplanation, setIncomeExplanation] = useState('');
-  const [expenseAmount, setExpenseAmount] = useState('');
-  const [expenseCurrency, setExpenseCurrency] = useState('');
-  const [expenseExplanation, setExpenseExplanation] = useState('');
 
-  const handleOpenIncomePopup = () => {
-    setIncomePopupOpen(true);
+  const handleOpenPopup = (type) => {
+    if (type === 'income') {
+      setIncomePopupOpen(true);
+    } else if (type === 'expense') {
+      setExpensePopupOpen(true);
+    }
   };
 
-  const handleCloseIncomePopup = () => {
+  const handleClosePopup = () => {
     setIncomePopupOpen(false);
-  };
-
-  const handleOpenExpensePopup = () => {
-    setExpensePopupOpen(true);
-  };
-
-  const handleCloseExpensePopup = () => {
     setExpensePopupOpen(false);
   };
 
-  const handleIncomeAmountChange = (event) => {
-    setIncomeAmount(event.target.value);
-  };
-
-  const handleIncomeCurrencyChange = (event) => {
-    setIncomeCurrency(event.target.value);
-  };
-
-  const handleIncomeExplanationChange = (event) => {
-    setIncomeExplanation(event.target.value);
-  };
-
-  const handleExpenseAmountChange = (event) => {
-    setExpenseAmount(event.target.value);
-  };
-
-  const handleExpenseCurrencyChange = (event) => {
-    setExpenseCurrency(event.target.value);
-  };
-
-  const handleExpenseExplanationChange = (event) => {
-    setExpenseExplanation(event.target.value);
-  };
-
-  const handleIncomeFormSubmit = (event) => {
-    event.preventDefault();
-    // Handle income form submission logic here
-    handleCloseIncomePopup();
-  };
-
-  const handleExpenseFormSubmit = (event) => {
-    event.preventDefault();
-    // Handle expense form submission logic here
-    handleCloseExpensePopup();
+  const handleSubmit = (amount, currency, explanation) => {
+    // Handle form submission logic here
+    console.log('Form submitted:', amount, currency, explanation);
   };
 
   return (
@@ -138,6 +92,7 @@ const Sidebar = () => {
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
+                  alt=""
                   width="100px"
                   height="100px"
                   src={`../../assets/tamzirtapoz.png`}
@@ -172,68 +127,17 @@ const Sidebar = () => {
                     width: "100px",
                     height: "50px",
                   }}
-                  onClick={handleOpenIncomePopup}
+                  onClick={() => handleOpenPopup('income')}
                 >
                   Income
                 </Button>
 
-                <Dialog open={isIncomePopupOpen} onClose={handleCloseIncomePopup}>
-        <DialogTitle className="text-center">Income</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleIncomeFormSubmit}>
-            <div className="mt-2 flex w-full justify-center">
-              <div className="mt-12">
-                <TextField
-                  id="income-amount"
-                  label="Amount"
-                  type="number"
-                  placeholder="Money Amount"
-                  fullWidth
-                  margin="normal"
-                  value={incomeAmount}
-                  onChange={handleIncomeAmountChange}
+                <PopupDialog
+                  open={isIncomePopupOpen}
+                  onClose={handleClosePopup}
+                  onSubmit={handleSubmit}
+                  title="Income"
                 />
-              </div>
-              <div className="mt-12">
-                <FormControl fullWidth>
-                  <p>Currency Type</p>
-                  <Select
-                    id="income-currency"
-                    value={incomeCurrency}
-                    onChange={handleIncomeCurrencyChange}
-                    className="text-center bg-red-600 text-white w-16 cursor-pointer select-all"
-                  >
-                    <MenuItem value="USD">USD</MenuItem>
-                    <MenuItem value="EUR">EUR</MenuItem>
-                    <MenuItem value="GBP">GBP</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="mt-12">
-                <TextField
-                  id="income-explanation"
-                  label="Explanation"
-                  placeholder="Detail"
-                  fullWidth
-                  margin="normal"
-                  value={incomeExplanation}
-                  onChange={handleIncomeExplanationChange}
-                  InputProps={{
-                    className: "text-white",
-                    onFocus: (e) => e.target.classList.add('bg-gray-900'),
-                    onBlur: (e) => e.target.classList.remove('bg-gray-900'),
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex justify-center items-center my-4">
-              <Button type="submit" variant="contained" color="primary">
-                Submit
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
 
 
                 <Button
@@ -245,69 +149,17 @@ const Sidebar = () => {
                     width: "100px",
                     height: "50px",
                   }}
-                  onClick={handleOpenExpensePopup}
+                  onClick={() => handleOpenPopup('expense')}
                 >
                   Expense
                 </Button>
 
-                <Dialog open={isExpensePopupOpen} onClose={handleCloseExpensePopup}>
-        <DialogTitle className="text-center">Expense</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleExpenseFormSubmit}>
-            <div className="mt-2 flex w-full justify-center">
-              <div className="mt-12">
-                <TextField
-                  id="expense-amount"
-                  label="Amount"
-                  type="number"
-                  placeholder="Money Amount"
-                  fullWidth
-                  margin="normal"
-                  value={expenseAmount}
-                  onChange={handleExpenseAmountChange}
+                <PopupDialog
+                  open={isExpensePopupOpen}
+                  onClose={handleClosePopup}
+                  onSubmit={handleSubmit}
+                  title="Expense"
                 />
-              </div>
-              <div className="mt-12">
-                <FormControl fullWidth>
-                  <p>Currency Type</p>
-                  <Select
-                    id="expense-currency"
-                    value={expenseCurrency}
-                    onChange={handleExpenseCurrencyChange}
-                    className="text-center bg-red-600 text-white w-16 cursor-pointer select-all"
-                  >
-                    <MenuItem value="USD">USD</MenuItem>
-                    <MenuItem value="EUR">EUR</MenuItem>
-                    <MenuItem value="GBP">GBP</MenuItem>
-                    {/* Add more currencies as needed */}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="mt-12">
-                <TextField
-                  id="expense-explanation"
-                  label="Explanation"
-                  placeholder="Detail"
-                  fullWidth
-                  margin="normal"
-                  value={expenseExplanation}
-                  onChange={handleExpenseExplanationChange}
-                  InputProps={{
-                    className: "text-white",
-                    onFocus: (e) => e.target.classList.add('bg-gray-900'),
-                    onBlur: (e) => e.target.classList.remove('bg-gray-900'),
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex justify-center items-center my-4">
-              <Button type="submit" variant="contained" color="primary">
-                Submit
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
 
                 <br />
                 <Typography
@@ -365,6 +217,19 @@ const Sidebar = () => {
                   }}
                 >
                   Total Expenses: 0 EUR
+                </Typography>
+
+                <br />
+
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: "rgba(16, 150, 234)",
+                    textAlign: "center",
+                    marginTop: "15px",
+                  }}
+                >
+                  Balance: 0 EUR
                 </Typography>
               </div>
             </Box>
