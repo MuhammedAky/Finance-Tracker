@@ -7,21 +7,50 @@ import {
   Typography,
   useTheme,
   Button,
+  FormControl,
+  Select,
 } from "@mui/material";
+
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../theme";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import PopupDialog from './PopupDialog';
+import { useSelector, useDispatch } from "react-redux";
+import { changeCurrency } from "../redux/actions/FinanceActions";
+
 
 const Sidebar = () => {
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const dispatch = useDispatch();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const [isIncomePopupOpen, setIncomePopupOpen] = useState(false);
   const [isExpensePopupOpen, setExpensePopupOpen] = useState(false);
+  const [currency, setCurrency] = useState('USD');
+
+  const rates = useSelector(state => state.finance.rates);
+
+  const selectedCurrency = useSelector(state => state.finance.currency);
+
+  const operations = useSelector(state => state.finance.operations);
+  
+
+  const { totalIncome, totalExpense } = operations.reduce(
+    (totals, operation) => {
+      const amount = Number(operation[2]);
+      if (operation[1] === "Income") {
+        return { ...totals, totalIncome: totals.totalIncome + amount };
+      } else {
+        return { ...totals, totalExpense: totals.totalExpense + amount };
+      }
+    },
+    { totalIncome: 0, totalExpense: 0 }
+  );
 
   const handleOpenPopup = (type) => {
     if (type === 'income') {
@@ -36,9 +65,13 @@ const Sidebar = () => {
     setExpensePopupOpen(false);
   };
 
-  const handleSubmit = (amount, currency, explanation) => {
-    // Handle form submission logic here
-    console.log('Form submitted:', amount, currency, explanation);
+  const handleBaseCurrency = (e) => {
+    const newCurrency = e.target.value;
+    setCurrency(newCurrency);
+
+    if (newCurrency !== selectedCurrency) {
+      dispatch(changeCurrency(newCurrency));
+    }
   };
 
   return (
@@ -46,9 +79,6 @@ const Sidebar = () => {
       sx={{
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
-        },
-        "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
         },
         "& .pro-inner-item": {
           padding: "5px 35px 5px 20px !important",
@@ -127,15 +157,13 @@ const Sidebar = () => {
                     width: "100px",
                     height: "50px",
                   }}
-                  onClick={() => handleOpenPopup('income')}
-                >
+                  onClick={() => handleOpenPopup('income')}>
                   Income
                 </Button>
 
                 <PopupDialog
                   open={isIncomePopupOpen}
                   onClose={handleClosePopup}
-                  onSubmit={handleSubmit}
                   title="Income"
                 />
 
@@ -157,7 +185,6 @@ const Sidebar = () => {
                 <PopupDialog
                   open={isExpensePopupOpen}
                   onClose={handleClosePopup}
-                  onSubmit={handleSubmit}
                   title="Expense"
                 />
 
@@ -165,32 +192,29 @@ const Sidebar = () => {
                 <Typography
                   variant="h4"
                   sx={{
-                    color: "white",
+                    color: "grey",
                     textAlign: "center",
                     marginTop: "15px",
                   }}
                 >
                   Base Currency:
-                  <span>
-                    <input
-                      list="currencies"
-                      name="currency"
+                  <FormControl fullWidth>
+                    <Select
                       id="currency"
-                      sx={{
-                        textAlign: "center",
-                        backgroundColor: "rgba(5, 150, 105, 100)",
-                        color: "white",
-                        width: "16px",
-                        cursor: "pointer",
-                      }}
-                    />
-                    <datalist id="currencies">
-                      <option value="AED"></option>
-                      <option value="AFN"></option>
-                      <option value="ALL"></option>
-                      <option value="AMD"></option>
-                    </datalist>
-                  </span>
+                      value={currency}
+                      onChange={(event) => handleBaseCurrency(event)}
+                    >
+                      { rates.length > 0 ? (
+                        rates.map((rate, i) => (
+                          <MenuItem key={i} value={rate[0]}>
+                            {rate[0]}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem>Loading...</MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
                 </Typography>
 
                 <br />
@@ -203,7 +227,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Total Incomes: 0 EUR
+                  Total Incomes: { totalIncome } {currency}
                 </Typography>
 
                 <br />
@@ -216,7 +240,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Total Expenses: 0 EUR
+                  Total Expenses: {totalExpense} {currency}
                 </Typography>
 
                 <br />
@@ -229,7 +253,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Balance: 0 EUR
+                  Balance: {totalIncome - totalExpense} {currency}
                 </Typography>
               </div>
             </Box>

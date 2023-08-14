@@ -5,6 +5,9 @@ import { tokens } from '../theme';
 const TransactionItem = ({ transaction }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  
+  const transactionType = transaction[1];
+  const backgroundColor = transactionType === 'Income' ? colors.greenAccent[700] : colors.redAccent[700];
 
   return (
     <Box
@@ -13,22 +16,23 @@ const TransactionItem = ({ transaction }) => {
       alignItems="center"
       borderBottom={`2px solid #f95959`}
       p="15px"
+      backgroundColor={backgroundColor}
+      style={{ marginBottom: '15px' }}
     >
       <Box>
         <Typography
-          color={colors.greenAccent[500]}
+          color={colors.grey[100]}
           variant="h5"
           fontWeight="600"
         >
-          {transaction.txId}
+          {transactionType}
         </Typography>
-        <Typography color={colors.grey[100]}>{transaction.user}</Typography>
-        <Typography>Amount: {transaction.amount}</Typography>
-        <Typography>Explanation: {transaction.explanation}</Typography>
+        <Typography>Amount: {transaction[2]}</Typography>
+        <Typography>Explanation: {transaction[4]}</Typography>
       </Box>
       <Box color={colors.grey[100]}>{transaction.date}</Box>
       <Box backgroundColor={colors.greenAccent[500]} p="5px 10px" borderRadius="4px">
-        ${transaction.cost}
+        ${transaction[2]}
       </Box>
     </Box>
   );

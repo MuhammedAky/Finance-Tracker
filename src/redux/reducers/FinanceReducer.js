@@ -1,4 +1,4 @@
-import ActionTypes from "../actionTypes";
+import * as ActionTypes from "../actionTypes/FinanceTypes";
 
 const initalFinanceState = {
     updateDate: 0,
@@ -8,8 +8,10 @@ const initalFinanceState = {
     currency: "USD",
 };
 
+
 const FinanceReducer = (state = initalFinanceState, action) => {
     switch(action.type) {
+
         case ActionTypes.DATE_UPDATED:
             localStorage.setItem("updateTime", JSON.stringify(Date.now()));
             return {

@@ -24,12 +24,22 @@ const TransactionList = ({ transactions }) => {
           colors={colors.grey[100]}
           p="15px"
         >
-          <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-            Recent Transactions
-          </Typography>
+          {
+            transactions.length > 0 ? (
+              <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+                Recent Transactions
+              </Typography>
+            ) : (
+              <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+              </Typography>
+            )
+          }
         </Box>
         {transactions.map((transaction, i) => (
-          <TransactionItem key={`${transaction.txId}-${i}`} transaction={transaction} />
+          <TransactionItem
+            key={i}
+            transaction={transaction}
+            />
         ))}
       </Box>
     </Box>

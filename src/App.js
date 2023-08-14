@@ -10,7 +10,7 @@ import { ColorModeContext, useMode } from "./theme";
 import axios from "axios";
 import store from "../src/redux/store";
 import { Provider } from "react-redux";
-import ActionTypes from "./redux/actionTypes";
+import * as ActionTypes from "./redux/actionTypes/FinanceTypes";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -22,8 +22,6 @@ function App() {
     let currency    = localStorage.getItem("currency");
     let operations  = localStorage.getItem("operations");
 
-    console.log(JSON.parse(operations));
-
     if (updateTime === null || rates === null || Number(Date.now()) - Number(updateTime) > 86400000) {
       
       axios({
@@ -32,12 +30,12 @@ function App() {
       }).then(function (response) {
         console.log(response.data.finance);
 
-        // store.dispatch({
-        //   type: ActionTypes.DATE_UPDATED,
-        //   payload: {
-        //     date: Date.now()
-        //   },
-        // });
+        store.dispatch({
+          type: ActionTypes.DATE_UPDATED,
+          payload: {
+            date: Date.now()
+          },
+        });
 
         store.dispatch({
           type: ActionTypes.RATES_UPDATED,
@@ -70,7 +68,7 @@ function App() {
       });
 
       store.dispatch({
-        type: ActionTypes.CURRENCY_CHHANGED,
+        type: ActionTypes.CURRENCY_CHANGED,
         payload: {
           currency: JSON.parse(currency),
         },

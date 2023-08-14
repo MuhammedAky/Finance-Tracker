@@ -1,15 +1,18 @@
 import { Box , useTheme} from "@mui/material";
 import { tokens } from "../theme";
-import { mockTransactions } from "../data/mockData";
 import TransactionList from "../components/TransactionList";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const operations = useSelector(state => state.finance.operations);
+
+  const reversedOperations = [...operations].reverse();
   return (
     <>
-      <TransactionList transactions={mockTransactions} />
+      <TransactionList transactions={reversedOperations} />
       
       <Box
         gridColumn="span 8"

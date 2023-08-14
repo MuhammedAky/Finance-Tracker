@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,18 +10,45 @@ import {
   Button,
 } from '@mui/material';
 
-const PopupDialog = ({ open, onClose, onSubmit, title }) => {
-  const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('');
-  const [explanation, setExplanation] = useState('');
+import { useDispatch, useSelector } from "react-redux";
+import { newOperation, updateRates } from "../redux/actions/FinanceActions";
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSubmit(amount, currency, explanation);
+const PopupDialog = ({ open, onClose, title }) => {
+
+  const [amount, setAmount] = useState('');
+  const [currency, setCurrency] = useState();
+  const [explanation, setExplanation] = useState('');
+  const [rates, setRates] = useState([]);
+
+  const dispatch = useDispatch();
+  const baseCurrency = useSelector(state => state.finance.currency);
+
+  useEffect(() => {
+    const storedRates = JSON.parse(localStorage.getItem("rates")) || {};
+    setRates(storedRates);
+
+    dispatch(updateRates(storedRates));
+
+    setCurrency(baseCurrency);
+  }, [baseCurrency, dispatch]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    dispatch(
+      newOperation(
+        title,
+        amount,
+        currency,
+        explanation
+      )
+    );
+
+    setAmount("");
+    setCurrency("");
+    setExplanation("");
     onClose();
   };
-
-  // ... Other input change handlers ...
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -44,10 +71,11 @@ const PopupDialog = ({ open, onClose, onSubmit, title }) => {
               value={currency}
               onChange={(event) => setCurrency(event.target.value)}
             >
-              <MenuItem value="USD">USD</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-              <MenuItem value="GBP">GBP</MenuItem>
-              {/* Add more currencies as needed */}
+              {rates.map((rate, i) => (
+                <MenuItem key={i} value={rate[0]}>
+                  {rate[0]}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <TextField
