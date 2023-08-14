@@ -35,6 +35,14 @@ const Sidebar = () => {
 
   const rates = useSelector(state => state.finance.rates);
 
+  let coefficient = 1;
+
+  rates.forEach((rate) => {
+    if (rate[0] === currency) {
+      coefficient = rate[1];
+    }
+  });
+
   const selectedCurrency = useSelector(state => state.finance.currency);
 
   const operations = useSelector(state => state.finance.operations);
@@ -227,7 +235,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Total Incomes: { totalIncome } {currency}
+                  Total Incomes: { Number((totalIncome * coefficient).toFixed(2))} {currency}
                 </Typography>
 
                 <br />
@@ -240,7 +248,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Total Expenses: {totalExpense} {currency}
+                  Total Expenses: { Number((totalExpense * coefficient).toFixed(2))} {currency}
                 </Typography>
 
                 <br />
@@ -253,7 +261,7 @@ const Sidebar = () => {
                     marginTop: "15px",
                   }}
                 >
-                  Balance: {totalIncome - totalExpense} {currency}
+                  Balance: { Number(((totalIncome * coefficient) - (totalExpense * coefficient)).toFixed(2))} {currency}
                 </Typography>
               </div>
             </Box>

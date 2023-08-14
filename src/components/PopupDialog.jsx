@@ -45,7 +45,6 @@ const PopupDialog = ({ open, onClose, title }) => {
     );
 
     setAmount("");
-    setCurrency("");
     setExplanation("");
     onClose();
   };
