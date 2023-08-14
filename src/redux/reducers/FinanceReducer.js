@@ -74,7 +74,7 @@ const FinanceReducer = (state = initalFinanceState, action) => {
 
         case ActionTypes.NEW_OPERATION:
             localStorage.setItem(
-                "opreations",
+                "operations",
                 JSON.stringify([
                     ...state.operations,
                     [
