@@ -13,16 +13,6 @@ const Dashboard = () => {
   const [filterType, setFilterType] = useState('None');
   const [currency, setCurrency] = useState("None");
 
-
-  // const handleFilter = () => {
-  //   const filter = {
-  //     type: filterType,
-  //     currency: currency,
-  //   };
-
-  //   console.log(filter);
-  // };
-
   const handleClear = () => {
     setFilterType('None');
     setCurrency("None");
@@ -30,7 +20,22 @@ const Dashboard = () => {
 
   let operations = useSelector(state => state.finance.operations);
 
-  operations = operations.filter((operation) => operation[1] !== filterType && (operation[3] === currency));
+  operations = operations.filter((operation) => {
+    
+    if (filterType === "None" && currency === "None") {
+      return true;
+    }
+
+    if (filterType === "None") {
+      return operation[3] === currency;
+    }
+
+    if (currency === "None") {
+      return operation[1] !== filterType;
+    }
+
+    return operation[1] !== filterType && operation[3] === currency;
+  });
 
   const reversedOperations = [...operations].reverse();
 
