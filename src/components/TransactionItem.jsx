@@ -1,6 +1,10 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme, IconButton } from '@mui/material';
 import { tokens } from '../theme';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch } from 'react-redux';
+import { deleteOperation } from '../redux/actions/FinanceActions';
 
 const TransactionItem = ({ transaction }) => {
   const theme = useTheme();
@@ -8,6 +12,18 @@ const TransactionItem = ({ transaction }) => {
   
   const transactionType = transaction[1];
   const backgroundColor = transactionType === 'Income' ? colors.greenAccent[700] : colors.redAccent[700];
+
+  const dispatch = useDispatch();
+
+  const handleDelete = () => {
+    // Dispatch the delete operation action here
+    dispatch(deleteOperation(transaction[0]));
+  };
+
+  const handleEdit = () => {
+    // Add your edit logic here
+    // For example, you can navigate to an edit page/component
+  };
 
   return (
     <Box
@@ -31,8 +47,13 @@ const TransactionItem = ({ transaction }) => {
         <Typography>Explanation: {transaction[4]}</Typography>
       </Box>
       <Box color={colors.grey[100]}>{transaction.date}</Box>
-      <Box backgroundColor={colors.greenAccent[500]} p="5px 10px" borderRadius="4px">
-        ${transaction[2]}
+      <Box display="flex" alignItems="center">
+        <IconButton onClick={handleEdit} sx={{ color: colors.greenAccent[500] }}>
+          <EditIcon />
+        </IconButton>
+        <IconButton onClick={handleDelete} sx={{ color: colors.redAccent[500] }}>
+          <DeleteIcon />
+        </IconButton>
       </Box>
     </Box>
   );
