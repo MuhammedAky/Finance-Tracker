@@ -11,26 +11,26 @@ const Dashboard = () => {
   const rates = useSelector(state => state.finance.rates);
 
   const [filterType, setFilterType] = useState('None');
-  const [currency, setCurrency] = useState("");
+  const [currency, setCurrency] = useState("None");
 
 
-  const handleFilter = () => {
-    const filter = {
-      type: filterType,
-      currency: currency,
-    };
-  };
+  // const handleFilter = () => {
+  //   const filter = {
+  //     type: filterType,
+  //     currency: currency,
+  //   };
+
+  //   console.log(filter);
+  // };
 
   const handleClear = () => {
     setFilterType('None');
-    setCurrency("");
+    setCurrency("None");
   };
-
-  console.log(currency);
 
   let operations = useSelector(state => state.finance.operations);
 
-  operations = operations.filter((operation) => operation[1] !== filterType);
+  operations = operations.filter((operation) => operation[1] !== filterType && (operation[3] === currency));
 
   const reversedOperations = [...operations].reverse();
 
@@ -54,7 +54,7 @@ const Dashboard = () => {
             </Select>
           </FormControl>
         </Grid>
-        {/* <Grid item>
+        <Grid item>
           <FormControl fullWidth>
             <Select
               id="currency"
@@ -62,14 +62,19 @@ const Dashboard = () => {
               onChange={(e) => setCurrency(e.target.value)}
               sx={{ width: '100%' }}
             >
+              <MenuItem value="None">
+                  None
+                </MenuItem>
+
               {rates.map((rate, i) => (
                 <MenuItem key={i} value={rate[0]}>
                   {rate[0]}
                 </MenuItem>
               ))}
+                
             </Select>
           </FormControl>
-        </Grid> */}
+        </Grid>
         <Grid item>
           <Button
             variant="contained"

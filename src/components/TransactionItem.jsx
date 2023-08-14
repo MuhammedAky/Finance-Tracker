@@ -44,6 +44,7 @@ const TransactionItem = ({ transaction }) => {
           {transactionType}
         </Typography>
         <Typography>Amount: {transaction[2]}</Typography>
+        <Typography>Currency: {transaction[3]}</Typography>
         <Typography>Explanation: {transaction[4]}</Typography>
       </Box>
       <Box color={colors.grey[100]}>{transaction.date}</Box>
